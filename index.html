@@ -1,10 +1,23 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <title>Testing</title>
+        <link rel="stylesheet" href="https://js.arcgis.com/4.6/esri/css/main.css" />
+        <script>
+            var locationPath = location.pathname.replace(/\/[^\/]+$/, "/");
+            window.dojoConfig = {
+                packages: [
+                {
+                    name: "app",
+                    location: locationPath + "app"
+                }]
+            };
+        </script>
         <script src="https://js.arcgis.com/4.6/"></script>
     </head>
     <body>
-
+        <div id="viewDiv"></div>
+        <script>require(["app/main"]);</script>
     </body>
 </html>
