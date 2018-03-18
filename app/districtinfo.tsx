@@ -16,11 +16,21 @@ class DistrictInfo extends declared(Widget) {
     @renderable()
     numberOfDistricts: number = 0
 
+    private removeDistrict() {
+        if (this.numberOfDistricts > 0) {
+            this.numberOfDistricts--;
+        }
+    }
+
+    private addDistrict() {
+        this.numberOfDistricts++;
+    }
+
     render() {
         return (
             <div bind={this} class={CSS.base}>
                 State Population: {this.population.toLocaleString()}<br />
-                Districts: {this.numberOfDistricts}
+                Districts: <button bind={this} onclick={this.removeDistrict}>-</button> {this.numberOfDistricts} <button bind={this} onclick={this.addDistrict}>+</button>
             </div>
         )
     }
