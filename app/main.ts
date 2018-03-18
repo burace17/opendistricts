@@ -7,6 +7,8 @@ import FeatureSet = require("esri/tasks/support/FeatureSet");
 import Query = require("esri/tasks/support/Query");
 import QueryTask = require("esri/tasks/QueryTask");
 import PrecinctInfo = require("app/precinctinfo");
+import DistrictInfo = require("app/districtinfo");
+import SummaryStatistics = require("esri/renderers/smartMapping/statistics/summaryStatistics")
 
 const map = new EsriMap();
 
@@ -25,30 +27,46 @@ const precinctsLayer = new FeatureLayer({
     outFields: ["*"]
 });
 
-var info = new PrecinctInfo({
-    container: "widgetDiv"
+var precinctInfo = new PrecinctInfo({
+    container: "precinctInfo"
+});
+
+var districtInfo = new DistrictInfo({
+    container: "districtInfo"
 });
 
 view.on("pointer-move", (event) => {
     view.hitTest(event).then((response) => {
         const graphic = response.results[0].graphic;
         const attributes = graphic.attributes;
-        info.precinctName = attributes.VTDNAME;
-        info.population = attributes.POPULATION;
-        info.white = attributes.WHITE;
-        info.black = attributes.BLACK;
-        info.hispanic = attributes.HISPANIC_O;
-        info.asian = attributes.ASIAN;
-        info.amindian = attributes.AMINDIAN;
+        precinctInfo.precinctName = attributes.VTDNAME;
+        precinctInfo.population = attributes.POPULATION;
+        precinctInfo.white = attributes.WHITE;
+        precinctInfo.black = attributes.BLACK;
+        precinctInfo.hispanic = attributes.HISPANIC_O;
+        precinctInfo.asian = attributes.ASIAN;
+        precinctInfo.amindian = attributes.AMINDIAN;
 
-        info.obama = attributes.PRES_08_DE;
-        info.mccain = attributes.PRES_08_RE;
-        info.other = attributes.PRES_08_OT;
+        precinctInfo.obama = attributes.PRES_08_DE;
+        precinctInfo.mccain = attributes.PRES_08_RE;
+        precinctInfo.other = attributes.PRES_08_OT;
     });
 });
 
+// Add the precincts layer to the map and then zoom to its extent
 map.add(precinctsLayer);
 precinctsLayer.queryExtent().then((response) => {
     view.goTo(response.extent);
 });
-view.ui.add(info, { position: "top-right",  index:0});
+
+// Calculate state population
+SummaryStatistics({
+    layer: precinctsLayer,
+    field: "POPULATION"
+}).then((response) => {
+    districtInfo.population = response.sum;
+});
+
+// Add widgets to the UI
+view.ui.add(precinctInfo, { position: "top-right",  index:0});
+view.ui.add(districtInfo, { position: "top-left", index:0 });
