@@ -10,6 +10,7 @@ class District  {
     num: number = 0;
     population: number = 0;
     idealPopulation: number = 0;
+    color: string = "#CCCCCC";
 
     constructor(n: number, idealPop: number) {
         this.num = n;
@@ -35,6 +36,10 @@ class DistrictInfo extends declared(Widget) {
     @property()
     @renderable()
     districts: Array<District> = []
+
+    @property()
+    @renderable()
+    unassigned: number = 0;
 
     private updateDistrictArray() {
         this.districts = []
@@ -63,7 +68,8 @@ class DistrictInfo extends declared(Widget) {
                 State Population: {this.population.toLocaleString()}<br />
                 Districts: <button bind={this} onclick={this.removeDistrict}>-</button> {this.numberOfDistricts} <button bind={this} onclick={this.addDistrict}>+</button>
                 <hr />
-                {this.districts.map((district) => <span key={district.num}>{district.num} {district.deviation} <br /> </span>)}
+                <input type="radio" name="districtlist" value="0" />Unassigned {this.unassigned}<br />
+                {this.districts.map((district) => <span key={district.num}><input type="radio" name="districtlist" value={district.num} /> {district.num} {district.deviation} <br /> </span>)}
             </div>
         )   
     }

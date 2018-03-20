@@ -14,6 +14,10 @@ class PrecinctInfo extends declared(Widget) {
 
     @property()
     @renderable()
+    district: number = -1;
+
+    @property()
+    @renderable()
     population: number = 0;
 
     @property()
@@ -64,7 +68,7 @@ class PrecinctInfo extends declared(Widget) {
     render() {
         return (
             <div bind={this} class={CSS.base}>
-            {this.precinctName}<br />
+            {this.precinctName} (CD {this.district})<br />
             Population: {this.population}<br />
             <hr />
             White: {this.white} {this.getPercentage(this.white, this.population)}<br />

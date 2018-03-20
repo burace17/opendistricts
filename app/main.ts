@@ -8,7 +8,8 @@ import Query = require("esri/tasks/support/Query");
 import QueryTask = require("esri/tasks/QueryTask");
 import PrecinctInfo = require("app/precinctinfo");
 import DistrictInfo = require("app/districtinfo");
-import SummaryStatistics = require("esri/renderers/smartMapping/statistics/summaryStatistics")
+import SummaryStatistics = require("esri/renderers/smartMapping/statistics/summaryStatistics");
+import SimpleFillSymbol = require("esri/symbols/SimpleFillSymbol");
 
 const map = new EsriMap();
 
@@ -50,6 +51,24 @@ view.on("pointer-move", (event) => {
         precinctInfo.obama = attributes.PRES_08_DE;
         precinctInfo.mccain = attributes.PRES_08_RE;
         precinctInfo.other = attributes.PRES_08_OT;
+
+        if (precinctInfo.district)
+            precinctInfo.district = attributes.DISTRICT;
+        else
+            precinctInfo.district = 0;
+    });
+});
+
+view.on("click", (event) => {
+    view.hitTest(event).then((response) => {
+        const graphic = response.results[0].graphic;
+        view.graphics.remove(graphic);
+        graphic.attributes.DISTRICT = 3;
+        districtInfo.unassigned -= graphic.attributes.POPULATION;
+        graphic.symbol = new SimpleFillSymbol({
+            color: "red"
+        });
+        view.graphics.add(graphic);
     });
 });
 
@@ -65,6 +84,7 @@ SummaryStatistics({
     field: "POPULATION"
 }).then((response) => {
     districtInfo.population = response.sum;
+    districtInfo.unassigned = response.sum;
 });
 
 // Add widgets to the UI
