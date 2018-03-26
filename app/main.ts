@@ -63,11 +63,12 @@ view.on("click", (event) => {
     view.hitTest(event).then((response) => {
         const graphic = response.results[0].graphic;
         view.graphics.remove(graphic);
-        graphic.attributes.DISTRICT = 3;
         districtInfo.unassigned -= graphic.attributes.POPULATION;
         graphic.symbol = new SimpleFillSymbol({
             color: "red"
         });
+        graphic.setAttribute("DISTRICT", 3);
+        
         view.graphics.add(graphic);
     });
 });
